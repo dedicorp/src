@@ -5,20 +5,20 @@ import java.util.TreeMap;
 class Main {
     public static void main(String[] args) {
 
-        Scanner scanner = new Scanner(System.in);//объявляем и инициализируем сканер для ввода с клавиатуры
-        startCalc();//вызываем метод startCalc (подобное в дальнейшем не будет комментироваться)
+        Scanner scanner = new Scanner(System.in);
+        startCalc();
 
-        while (true) {//бесконечный цикл (подобное в дальнейшем не будет комментироваться)
-            System.out.println("Ввод: ");//выводим текст в консоль (подобное в дальнейшем не будет комментироваться)
+        while (true) {
+            System.out.println("Ввод: ");
             scanner.hasNext();
-            String line = scanner.nextLine();//считываем введ1нную строку
+            String line = scanner.nextLine();
 
-            if (line.equals("exit")) {//если введённая строка - exit, то (подобное в дальнейшем не будет комментироваться)
+            if (line.equals("exit")) {
                 exitCalc();
-                break;//прерываем цикл (подобное в дальнейшем не будет комментироваться)
+                break;
             }
 
-            String output = calc(line);//присваиваем строке output значение, которое вернёт calc (подобное в дальнейшем не будет комментироваться)
+            String output = calc(line);
             if(output.equals("")){
                 break;
             }else {
@@ -29,29 +29,29 @@ class Main {
 
     }
 
-    private static void startCalc() {//выводим приветственное сообщение
+    private static void startCalc() {
         System.out.println("Добро пожаловать в Калькулятор, он работает только с арабскими и римскими цифрами от 1 до 10");
         System.out.println("Сложение(+), Вычитание(-), Умножение(*), Деление(/)");
         System.out.println("Если Вы хотите покинуть программу, введите 'exit'");
     }
 
-    private static void exitCalc() {//выводим прощальное сообщение
+    private static void exitCalc() {
         System.out.print("До скорых встреч!");
     }
 
-    public static String calc(String input){//проводим вычисления, в качестве параметра принимает введённую строку
-        try {//ловим исключение (подобное в дальнейшем не будет комментироваться)
-            String[] symbols = input.split(" ");// разбиваем строку по пробелам
-            if (symbols.length != 3)// если массив слов, полученный выше, имеет длинну отличную от трёх
-                throw new Exception("Что-то пошло не так, попробуйте еще раз");// бросаем исключение (подобное в дальнейшем не будет комментироваться)
+    public static String calc(String input){
+        try {
+            String[] symbols = input.split(" ");
+            if (symbols.length != 3)
+                throw new Exception("Что-то пошло не так, попробуйте еще раз");
 
-            Number firstNumber = NumberService.parseAndValidate(symbols[0]);// определяем(опознаём) первое число
-            Number secondNumber = NumberService.parseAndValidate(symbols[2], firstNumber.getType());// определяем(опознаём) второе число, учитывая тип первого
-            String result = ActionService.calculate(firstNumber, secondNumber, symbols[1]);// получаем результат вычислений
-            return "Ответ: " + result;// возвращаем результат выполнения функции
+            Number firstNumber = NumberService.parseAndValidate(symbols[0]);
+            Number secondNumber = NumberService.parseAndValidate(symbols[2], firstNumber.getType());
+            String result = ActionService.calculate(firstNumber, secondNumber, symbols[1]);
+            return "Ответ: " + result;
 
         } catch (Exception e) {
-            System.out.println(e.getMessage());// ловим, брошенное нами, искключение и выводим сообщение
+            System.out.println(e.getMessage());
             exitCalc();
             return "";
         }
@@ -60,11 +60,11 @@ class Main {
 
 class ActionService {
 
-    public static String calculate(Number first, Number second, String action) throws Exception {// метод, отвечающий за выполнение операции между числами
-        // в данном методе мы отказываемся от обработки исключения, "выталкивая" его на уровунь выше
+    public static String calculate(Number first, Number second, String action) throws Exception {
+        
         int result;
 
-        switch (action) {// сравниваем символ action с символами операций
+        switch (action) {
             case "+":
                 result = first.getValue() + second.getValue();
                 break;
@@ -77,22 +77,22 @@ class ActionService {
             case "/":
                 result = first.getValue() / second.getValue();
                 break;
-            default:// в случае если символ action не совпадает ни с одним символом операции, то выбрасываем исключение
+            default:
                 throw new Exception("Не правильно введен символ операции, используйте только +, -, *, /");
         }
 
-        if (first.getType() == NumberType.ROMAN) {// если тип числа равен константе NumberType.ROMAN, то
-            return NumberService.toRomanNumber(result);// преобразуем в римскую запись, иначе
-        } else return String.valueOf(result);// возвращаем значение переменной result в виде строки
+        if (first.getType() == NumberType.ROMAN) {
+            return NumberService.toRomanNumber(result);
+        } else return String.valueOf(result);
     }
 }
 
 class NumberService {
 
-    private static TreeMap<Integer, String> romanString = new TreeMap<>();//создаём и инициализируем переменную, хранящую в себе пары
-    // "ключ-значение"
+    private static TreeMap<Integer, String> romanString = new TreeMap<>();
+   
 
-    static {// добавляем значения в переменную romanString
+    static {
         romanString.put(1, "I");
         romanString.put(4, "IV");
         romanString.put(5, "V");
@@ -104,52 +104,52 @@ class NumberService {
         romanString.put(100, "C");
     }
 
-    static Number parseAndValidate(String symbol) throws Exception {// метод, предназначенный для "опознания" числа
+    static Number parseAndValidate(String symbol) throws Exception {
 
-        int value; // объявляем переменную типа int (подобное в дальнейшем не будет комментироваться)
+        int value; 
         NumberType type;
 
         try {
-            value = Integer.parseInt(symbol);// с помощью метода parseInt пытаемся преобразовать строку в число
-            type = NumberType.ARABIC;// если мы смогли выполнить преобразование, то это арабское число
+            value = Integer.parseInt(symbol);
+            type = NumberType.ARABIC;
         } catch (NumberFormatException e) {
-            value = toArabicNumber(symbol);// если неполучилось преобразовать к арабскому числу, то возможно, что это римское число
+            value = toArabicNumber(symbol);
             type = NumberType.ROMAN;
         }
 
-        if (value < 1 || value > 10) {// выполнится если value < 1 или value > 10
+        if (value < 1 || value > 10) {
             throw new Exception("Неподходящее значение числа(ел), используйте числа от 1 до 10 включительно");
         }
 
         return new Number(value, type);
     }
 
-    static Number parseAndValidate(String symbol, NumberType type) throws Exception {// метод, предназначенный для "опознания" числа,
-        //а также и для проверки совпадения типов с первым введённым числом
+    static Number parseAndValidate(String symbol, NumberType type) throws Exception {
+        
 
         Number number = parseAndValidate(symbol);
-        if (number.getType() != type) {// если типы чисел не совпадают
+        if (number.getType() != type) {
             throw new Exception("Числа разных типов, используйте один тип вводных значений");
         }
 
         return number;
     }
 
-    private static int letterToNumber(char letter) {// метод, необходимый для преобразования римского символов в число
+    private static int letterToNumber(char letter) {
 
         int result = -1;
 
-        for (Map.Entry<Integer, String> entry : romanString.entrySet()) {// цикл, проходящий по всем парам из romanString
-            if (entry.getValue().equals(String.valueOf(letter)))// если символ letter совпадает со значением переменной entry, то
-                result = entry.getKey();// result равен ключу entry
+        for (Map.Entry<Integer, String> entry : romanString.entrySet()) {
+            if (entry.getValue().equals(String.valueOf(letter)))
+                result = entry.getKey();
         }
         return result;
     }
 
-    static String toRomanNumber(Integer number) throws Exception {// метод, необходимый для преобразования в римское число
+    static String toRomanNumber(Integer number) throws Exception {
 
-        Integer i = romanString.floorKey(number);// присваиваем i наибольшее число из ключей romanString, которое меньше number
-        if (i == null) {// если ключне найден, то выбрасываем исключение
+        Integer i = romanString.floorKey(number);
+        if (i == null) {
             throw new Exception("Римское число меньше или равно нулю");
         }
 
@@ -159,26 +159,26 @@ class NumberService {
         return romanString.get(i) + toRomanNumber(number - i);
     }
 
-    static int toArabicNumber(String roman) throws Exception {//метод для преобразования римского числа в арабское
+    static int toArabicNumber(String roman) throws Exception {
         int result = 0;
 
         int i = 0;
         while (i < roman.length()) {
-            char letter = roman.charAt(i);// получаем i-ый символ из строки
-            int num = letterToNumber(letter);// преобразуем полученный символ в число
+            char letter = roman.charAt(i);
+            int num = letterToNumber(letter);
 
             if (num < 0)
                 throw new Exception("Неверный римский символ");
 
-            i++;// проверяем следующий символ
+            i++;
             if (i == roman.length()) {
                 result += num;
             } else {
                 int nextNum = letterToNumber(roman.charAt(i));
-                if (nextNum > num) {// если число полученное из i+1 символа больше чем из i-го символа, то
-                    result += (nextNum - num);// находим разность между большим и меньшим, иначе
+                if (nextNum > num) {
+                    result += (nextNum - num);
                     i++;
-                } else result += num;// складываем
+                } else result += num;
             }
         }
         return result;
@@ -187,24 +187,24 @@ class NumberService {
 
 class Number {
 
-    private int value;// поле, хранящее в себе значение
-    private NumberType type;// поле, хранящее в себе тип
+    private int value;
+    private NumberType type;
 
-    Number(int value, NumberType type) {// конструктор класса с параметрами типа int и NumberType
+    Number(int value, NumberType type) {
         this.value = value;
         this.type = type;
     }
 
-    int getValue() {// метод, возвращающий значение поля value
+    int getValue() {
         return value;
     }
 
-    NumberType getType() {// метод, возвращающий значение поля type
+    NumberType getType() {
         return type;
     }
 }
 
-enum NumberType { // Перечисление, представляет собой набор логически связанных констант (фактически представляет новый тип)
+enum NumberType { 
     ARABIC,
     ROMAN
 }
